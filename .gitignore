@@ -1,0 +1,26 @@
+# Secrets and generated state — never commit these
+keys/
+secrets/
+state/
+outbox/
+vault.age
+*.key
+recovered.txt
+config.json
+logs
+share-*.txt
+share-raw.local
+share-timelocked.age
+share-unlock-round.txt
+RECOVERY-CARD.txt
+MOVE-OFFBOX-then-delete/
+
+# Build output
+bin/
+/dms
+
+# Python reference cache
+__pycache__/
+
+# Local tooling
+.claude/settings.local.json

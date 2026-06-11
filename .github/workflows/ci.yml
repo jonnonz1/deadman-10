@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Verify formatting
+        run: test -z "$(gofmt -l .)" || (gofmt -l . && exit 1)
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Build (reproducible)
+        run: go build -trimpath -o bin/dms ./cmd/dms
+
+      - name: Dependency audit (no heavy/unexpected deps in the binary)
+        run: |
+          if go list -deps ./cmd/dms | grep -iE 'go-ethereum|/gorm|everfinance|/goar$|hashicorp/vault'; then
+            echo "unexpected heavy dependency in binary"; exit 1
+          fi
+
+      - name: Unit + CLI tests
+        run: go test ./...
+
+      # The live drand integration tests hit the public network; run them but
+      # don't fail the build on a transient beacon/network hiccup.
+      - name: Live drand integration (best-effort)
+        continue-on-error: true
+        run: |
+          go test -tags=integration ./internal/timelock/ -run Live
+          DMS_INTEGRATION=1 go test ./cmd/dms/ -run TestCLITimelockArmRecover
