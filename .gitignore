@@ -1,13 +1,13 @@
-# Secrets and generated state — never commit these
-keys/
-secrets/
-state/
-outbox/
-vault.age
+# Secrets and generated runtime state at the repo root — never commit these
+/keys/
+/secrets/
+/state/
+/outbox/
+/vault.age
 *.key
-recovered.txt
-config.json
-logs
+/recovered.txt
+/config.json
+/logs
 share-*.txt
 share-raw.local
 share-timelocked.age
@@ -16,7 +16,7 @@ RECOVERY-CARD.txt
 MOVE-OFFBOX-then-delete/
 
 # Build output
-bin/
+/bin/
 /dms
 
 # Python reference cache
